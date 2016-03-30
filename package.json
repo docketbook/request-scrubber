@@ -1,0 +1,34 @@
+{
+  "name": "request-scrubber",
+  "version": "0.0.1",
+  "description": "Declarative validation logic for arbitrary JS objects",
+  "main": "index.js",
+  "devDependencies": {
+    "chai": "^3.0.0",
+    "mocha": "^2.2.5",
+    "sinon": "^1.15.3",
+    "jshint":"2.9.1-rc1",
+    "jscs":"2.6.0"
+  },
+  "scripts": {
+    "test": "mocha test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/docketbook/request-scrubber.git"
+  },
+  "author": "Dave Finster <df@docketbook.io>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/docketbook/request-scrubber/issues"
+  },
+  "homepage": "https://github.com/docketbook/request-scrubber",
+  "dependencies": {
+    "validator":"4.4.0",
+    "assert-plus":"1.0.0",
+    "async":"1.5.0"
+  },
+  "directories": {
+    "test": "test"
+  }
+}

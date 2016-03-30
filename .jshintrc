@@ -1,0 +1,11 @@
+{
+  "bitwise":true,
+  "curly":true,
+  "eqeqeq":true,
+  "esversion":6,
+  "freeze":true,
+  "varstmt":true,
+  "unused":true,
+  "node":true,
+  "mocha":true
+}
