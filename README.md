@@ -52,6 +52,7 @@ Scrubber.validateObject(badObjNull, spec, function(err, parsedValues) {
 * modelFetch - object. A reference to an object with functions that allow the fetching of other objects based on the validated value of the field. By default, if multiple models are required then getMany(uuids, callback(err, results)) is used, otherwise get(uuid, callback(err, model)) is used.
 * mustExist - true of false - default false. Used in conjunction with modelFetch. If true, should the result of the modelFetch call not result in the correct number of models being returned, validation will fail
 * fetchFunction - string. Used to override the function used to fetch models.
+* ensureArray - true of false - default false. Specify whether the value should under all cirsumstances be an array. 
 
 ## Nested Validation
 

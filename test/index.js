@@ -54,6 +54,43 @@ describe("request-scrubber", function () {
         });
     });
 
+    it('#can perform string array validation', function(done) {
+        let goodObj = {
+            aField: ["testing", "string"],
+        };
+        let badObj = {
+            aField: 4
+        }
+        let spec = {
+            fields: {
+                aField: {
+                    type: Type.string,
+                    notNull: true,
+                    required: true,
+                    ensureArray: true,
+                },
+            },
+        };
+        async.series([
+            function(doneCallback) {
+                Scrubber.validateObject(goodObj, spec, function(err, parsedValues) {
+                    expect(err).to.equal(null);
+                    doneCallback();
+                });
+            },
+            function(doneCallback) {
+                Scrubber.validateObject(badObj, spec, function(err, parsedValues) {
+                    expect(err).to.not.equal(null);
+                    expect(err.aField).to.not.equal(null);
+                    expect(err.errors.aField.message).to.equal("Expected value to be an array");
+                    doneCallback();
+                });
+            },
+        ], function(err) {
+            done();
+        });
+    });
+
     it('#can perform number validation', function(done) {
         let goodObj = {
             aField: 4,
