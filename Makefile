@@ -3,7 +3,7 @@ DOCKER_MACHINE=default
 JSLINT_ARGS=--node --nomen --indent=2
 JS_FILES=index.js lib/*.js
 DOCKER_NODE_STD_ARGS=-it --rm -v $(shell pwd):/usr/src/app -w /usr/src/app
-DOCKER_NODE_IMAGE=node:5.3.0
+DOCKER_NODE_IMAGE=mhart/alpine-node:latest
 
 npm:
 	docker run $(DOCKER_NODE_STD_ARGS) $(DOCKER_NODE_IMAGE) npm install

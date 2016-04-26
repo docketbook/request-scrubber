@@ -537,6 +537,143 @@ describe("request-scrubber", function () {
 
   });
 
+
+  it('#can perform nested validation where obj is null', function(done) {
+    let goodObj = {
+      name: {
+        first: "Dave",
+        last: "Finster"
+      },
+      address: {
+        street: "Something"
+      }
+    }
+    let stillGoodObj = {
+      name: {
+        first: "Dave",
+        last: "Finster"
+      }
+    }
+    let spec = {
+      fields: {
+        name: {
+          fields: {
+            address: {
+              fields: {
+                street: {
+                  type: Type.string
+                }
+              }
+            },
+            first: {
+              type: Type.string,
+              notNull: true,
+              required: true,
+            },
+            last: {
+              type: Type.string,
+              notNull: true,
+              required: true,
+            },
+          },
+        },
+      },
+    };
+    async.series([
+      function(doneCallback) {
+        Scrubber.validateObject(goodObj, spec, function(err, parsedValues) {
+          expect(err).to.equal(null);
+          expect(parsedValues).to.not.equal(null);
+          expect(parsedValues.name).to.not.equal(null);
+          expect(parsedValues.name.first).to.equal("Dave");
+          expect(parsedValues.name.last).to.equal("Finster");
+          doneCallback();
+        });
+      },
+      function(doneCallback) {
+        Scrubber.validateObject(stillGoodObj, spec, function(err, parsedValues) {
+          expect(err).to.equal(null);
+          expect(parsedValues).to.not.equal(null);
+          expect(parsedValues.name).to.not.equal(null);
+          expect(parsedValues.name.first).to.equal("Dave");
+          expect(parsedValues.name.last).to.equal("Finster");
+          doneCallback();
+        });
+      },
+    ], function(err) {
+      done();
+    });
+
+  });
+
+  it('#can perform nested validation where obj is undefined and its required', function(done) {
+    let goodObj = {
+      name: {
+        first: "Dave",
+        last: "Finster"
+      },
+      address: {
+        street: "Something"
+      }
+    }
+    let badObj = {
+      name: {
+        first: "Dave",
+        last: "Finster"
+      }
+    }
+    let spec = {
+      fields: {
+        address: {
+          required: true,
+          fields: {
+            street: {
+              type: Type.string
+            }
+          }
+        },
+        name: {
+          fields: {
+            first: {
+              type: Type.string,
+              notNull: true,
+              required: true,
+            },
+            last: {
+              type: Type.string,
+              notNull: true,
+              required: true,
+            },
+          },
+        },
+      },
+    };
+    async.series([
+      function(doneCallback) {
+        Scrubber.validateObject(goodObj, spec, function(err, parsedValues) {
+          expect(err).to.equal(null);
+          expect(parsedValues).to.not.equal(null);
+          expect(parsedValues.name).to.not.equal(null);
+          expect(parsedValues.name.first).to.equal("Dave");
+          expect(parsedValues.name.last).to.equal("Finster");
+          doneCallback();
+        });
+      },
+      function(doneCallback) {
+        Scrubber.validateObject(badObj, spec, function(err, parsedValues) {
+          expect(err).to.not.equal(null);
+          expect(err.errors).to.not.equal(undefined);
+          expect(err.errors.address).to.not.equal(undefined);
+          expect(err.errors.address.message).to.equal("A value is required");
+          doneCallback();
+        });
+      },
+    ], function(err) {
+      done();
+    });
+
+  });
+
   it('#can perform triple nested validation', function(done) {
     let goodObj = {
       person: {
