@@ -3,6 +3,7 @@ let sinon = require('sinon');
 let expect = require('chai').expect;
 let async = require('async');
 let Type = require('../').Type;
+let Parser = require('../').Parser;
 let Scrubber = require('../').Validate;
 let MockModel = require('./mock_model');
 describe("request-scrubber", function () {
@@ -476,6 +477,49 @@ describe("request-scrubber", function () {
     ], function(err) {
       done();
     });
+  });
+
+  it("#can perform parsing on delimited fields", function(done) {
+
+    let goodObj = {
+      aField: "1,2,3,4,5",
+    };
+    let badObj = {
+      aField: "abcde",
+    };
+
+    let spec = {
+      fields: {
+        aField: {
+          type: Type.number,
+          delimiter: ',',
+          parser: Parser.stringToInt,
+        },
+      },
+    };
+
+    async.series([
+      function(doneCallback) {
+        Scrubber.validateObject(goodObj, spec, function(err, parsedValues) {
+          expect(err).to.equal(null);
+          expect(parsedValues).to.not.equal(null);
+          expect(parsedValues.aField.length).to.equal(5);
+          doneCallback();
+        });
+      },
+      function(doneCallback) {
+        Scrubber.validateObject(badObj, spec, function(err, parsedValues) {
+          expect(err).to.not.equal(null);
+          expect(parsedValues).to.not.equal(null);
+          expect(err.errors.aField.message).to.equal("The value is of the wrong type");
+          doneCallback();
+        });
+
+      },
+    ], function(err) {
+      done();
+    });
+
   });
 
   it('#can perform nested validation', function(done) {
