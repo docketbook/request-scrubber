@@ -870,11 +870,14 @@ describe("request-scrubber", function () {
       arr: [
         {
           a: 1,
+          b: 1,
         },
         {
           a: 2,
         },
       ],
+      other: 1,
+      asdf: 1,
     };
 
     let badObj = {
@@ -894,11 +897,14 @@ describe("request-scrubber", function () {
           objectFields: {
             fields: {
               a: {
-                type: Type.number
+                type: Type.number, notNull: true, required: true,
               },
             },
           },
         },
+        other: {
+          type: Type.number,
+        }
       },
     };
 
@@ -912,7 +918,6 @@ describe("request-scrubber", function () {
       function(cb) {
         Scrubber.validateObject(badObj, spec, function(err, parsed) {
           expect(err).to.not.equal(null);
-          // expect(err.errors.arr.a.message)
           expect(err.errors.arr.errors.a.message).to.equal('The value is of the wrong type');
           return cb();
         });
