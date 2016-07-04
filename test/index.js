@@ -862,7 +862,64 @@ describe("request-scrubber", function () {
       },
     ], function(err) {
       done();
-    })
+    });
+  });
+
+  it('#Can validate an array of objects', function(done) {
+    let goodObj =  {
+      arr: [
+        {
+          a: 1,
+        },
+        {
+          a: 2,
+        },
+      ],
+    };
+
+    let badObj = {
+      arr: [
+        {
+          a: 'string',
+        },
+      ],
+    };
+
+    let spec = {
+      fields: {
+        arr: {
+          type: Type.object,
+          validateObjectArray: true,
+          ensureArray: true,
+          objectFields: {
+            fields: {
+              a: {
+                type: Type.number
+              },
+            },
+          },
+        },
+      },
+    };
+
+    async.series([
+      function(cb) {
+        Scrubber.validateObject(goodObj, spec, function(err, parsed) {
+          expect(err).to.equal(null);
+          return cb();
+        });
+      },
+      function(cb) {
+        Scrubber.validateObject(badObj, spec, function(err, parsed) {
+          expect(err).to.not.equal(null);
+          // expect(err.errors.arr.a.message)
+          expect(err.errors.arr.errors.a.message).to.equal('The value is of the wrong type');
+          return cb();
+        });
+      }
+    ], function(err) {
+      done();
+    });
   });
 
 });
