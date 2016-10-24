@@ -6,6 +6,7 @@ let Type = require('../').Type;
 let Parser = require('../').Parser;
 let Scrubber = require('../').Validate;
 let MockModel = require('./mock_model');
+let verror = require("verror");
 describe("request-scrubber", function () {
 
   it('#can perform string validation', function(done) {
@@ -37,16 +38,18 @@ describe("request-scrubber", function () {
       function(doneCallback) {
         Scrubber.validateObject(badObj, spec, function(err, parsedValues) {
           expect(err).to.not.equal(null);
-          expect(err.aField).to.not.equal(null);
-          expect(err.errors.aField.message).to.equal("The value is of the wrong type");
+          expect(err.errors().length).to.equal(1);
+          expect(err.errors()[0].message).to.equal("Error validating aField: 4 is the wrong type");
+          expect(verror.VError.cause(err.errors()[0]).message).to.equal("4 is the wrong type");
           doneCallback();
         });
       },
       function(doneCallback) {
         Scrubber.validateObject(badObjNull, spec, function(err, parsedValues) {
           expect(err).to.not.equal(null);
-          expect(err.aField).to.not.equal(null);
-          expect(err.errors.aField.message).to.equal("The value can not be null");
+          expect(err.errors().length).to.equal(1);
+          expect(err.errors()[0].message).to.equal("Error validating aField: The value can not be null");
+          expect(verror.VError.cause(err.errors()[0]).message).to.equal("The value can not be null");
           doneCallback();
         });
       }
@@ -82,8 +85,8 @@ describe("request-scrubber", function () {
       function(doneCallback) {
         Scrubber.validateObject(badObj, spec, function(err, parsedValues) {
           expect(err).to.not.equal(null);
-          expect(err.aField).to.not.equal(null);
-          expect(err.errors.aField.message).to.equal("Expected value to be an array");
+          expect(err.errors().length).to.equal(1);
+          expect(err.errors()[0].message).to.equal("Error validating aField: Expected 4 to be an array");
           doneCallback();
         });
       },
@@ -121,16 +124,16 @@ describe("request-scrubber", function () {
       function(doneCallback) {
         Scrubber.validateObject(badObj, spec, function(err, parsedValues) {
           expect(err).to.not.equal(null);
-          expect(err.aField).to.not.equal(null);
-          expect(err.errors.aField.message).to.equal("The value is of the wrong type");
+          expect(err.errors().length).to.equal(1);
+          expect(err.errors()[0].message).to.equal("Error validating aField: 4 is the wrong type");
           doneCallback();
         });
       },
       function(doneCallback) {
         Scrubber.validateObject(badObjNull, spec, function(err, parsedValues) {
           expect(err).to.not.equal(null);
-          expect(err.aField).to.not.equal(null);
-          expect(err.errors.aField.message).to.equal("The value can not be null");
+          expect(err.errors().length).to.equal(1);
+          expect(err.errors()[0].message).to.equal("Error validating aField: The value can not be null");
           doneCallback();
         });
       }
@@ -172,16 +175,16 @@ describe("request-scrubber", function () {
       function(doneCallback) {
         Scrubber.validateObject(badObj, spec, function(err, parsedValues) {
           expect(err).to.not.equal(null);
-          expect(err.aField).to.not.equal(null);
-          expect(err.errors.aField.message).to.equal("The value is of the wrong type");
+          expect(err.errors().length).to.equal(1);
+          expect(err.errors()[0].message).to.equal("Error validating aField: NaN is the wrong type");
           doneCallback();
         });
       },
       function(doneCallback) {
         Scrubber.validateObject(badObjNull, spec, function(err, parsedValues) {
           expect(err).to.not.equal(null);
-          expect(err.aField).to.not.equal(null);
-          expect(err.errors.aField.message).to.equal("The value can not be null");
+          expect(err.errors().length).to.equal(1);
+          expect(err.errors()[0].message).to.equal("Error validating aField: The value can not be null");
           doneCallback();
         });
       }
@@ -219,16 +222,16 @@ describe("request-scrubber", function () {
       function(doneCallback) {
         Scrubber.validateObject(badObj, spec, function(err, parsedValues) {
           expect(err).to.not.equal(null);
-          expect(err.aField).to.not.equal(null);
-          expect(err.errors.aField.message).to.equal("The value is of the wrong type");
+          expect(err.errors().length).to.equal(1);
+          expect(err.errors()[0].message).to.equal("Error validating aField: 4 is the wrong type");
           doneCallback();
         });
       },
       function(doneCallback) {
         Scrubber.validateObject(badObjNull, spec, function(err, parsedValues) {
           expect(err).to.not.equal(null);
-          expect(err.aField).to.not.equal(null);
-          expect(err.errors.aField.message).to.equal("The value can not be null");
+          expect(err.errors().length).to.equal(1);
+          expect(err.errors()[0].message).to.equal("Error validating aField: The value can not be null");
           doneCallback();
         });
       }
@@ -266,16 +269,16 @@ describe("request-scrubber", function () {
       function(doneCallback) {
         Scrubber.validateObject(badObj, spec, function(err, parsedValues) {
           expect(err).to.not.equal(null);
-          expect(err.aField).to.not.equal(null);
-          expect(err.errors.aField.message).to.equal("The value is of the wrong type");
+          expect(err.errors().length).to.equal(1);
+          expect(err.errors()[0].message).to.equal("Error validating aField: asdfun@ooi0boia. is the wrong type");
           doneCallback();
         });
       },
       function(doneCallback) {
         Scrubber.validateObject(badObjNull, spec, function(err, parsedValues) {
           expect(err).to.not.equal(null);
-          expect(err.aField).to.not.equal(null);
-          expect(err.errors.aField.message).to.equal("The value can not be null");
+          expect(err.errors().length).to.equal(1);
+          expect(err.errors()[0].message).to.equal("Error validating aField: The value can not be null");
           doneCallback();
         });
       }
@@ -313,16 +316,16 @@ describe("request-scrubber", function () {
       function(doneCallback) {
         Scrubber.validateObject(badObj, spec, function(err, parsedValues) {
           expect(err).to.not.equal(null);
-          expect(err.aField).to.not.equal(null);
-          expect(err.errors.aField.message).to.equal("The value is of the wrong type");
+          expect(err.errors().length).to.equal(1);
+          expect(err.errors()[0].message).to.equal("Error validating aField: qewfasdf is the wrong type");
           doneCallback();
         });
       },
       function(doneCallback) {
         Scrubber.validateObject(badObjNull, spec, function(err, parsedValues) {
           expect(err).to.not.equal(null);
-          expect(err.aField).to.not.equal(null);
-          expect(err.errors.aField.message).to.equal("The value can not be null");
+          expect(err.errors().length).to.equal(1);
+          expect(err.errors()[0].message).to.equal("Error validating aField: The value can not be null");
           doneCallback();
         });
       }
@@ -360,16 +363,16 @@ describe("request-scrubber", function () {
       function(doneCallback) {
         Scrubber.validateObject(badObj, spec, function(err, parsedValues) {
           expect(err).to.not.equal(null);
-          expect(err.aField).to.not.equal(null);
-          expect(err.errors.aField.message).to.equal("The value is of the wrong type");
+          expect(err.errors().length).to.equal(1);
+          expect(err.errors()[0].message).to.equal("Error validating aField: qewfasdf is the wrong type");
           doneCallback();
         });
       },
       function(doneCallback) {
         Scrubber.validateObject(badObjNull, spec, function(err, parsedValues) {
           expect(err).to.not.equal(null);
-          expect(err.aField).to.not.equal(null);
-          expect(err.errors.aField.message).to.equal("The value can not be null");
+          expect(err.errors().length).to.equal(1);
+          expect(err.errors()[0].message).to.equal("Error validating aField: The value can not be null");
           doneCallback();
         });
       }
@@ -410,16 +413,16 @@ describe("request-scrubber", function () {
       function(doneCallback) {
         Scrubber.validateObject(badObj, spec, function(err, parsedValues) {
           expect(err).to.not.equal(null);
-          expect(err.aField).to.not.equal(null);
-          expect(err.errors.aField.message).to.equal("The value is of the wrong type");
+          expect(err.errors().length).to.equal(1);
+          expect(err.errors()[0].message).to.equal("Error validating aField: 3 is the wrong type");
           doneCallback();
         });
       },
       function(doneCallback) {
         Scrubber.validateObject(badObjNull, spec, function(err, parsedValues) {
           expect(err).to.not.equal(null);
-          expect(err.aField).to.not.equal(null);
-          expect(err.errors.aField.message).to.equal("The value can not be null");
+          expect(err.errors().length).to.equal(1);
+          expect(err.errors()[0].message).to.equal("Error validating aField: The value can not be null");
           doneCallback();
         });
       }
@@ -461,16 +464,16 @@ describe("request-scrubber", function () {
       function(doneCallback) {
         Scrubber.validateObject(badObj, spec, function(err, parsedValues) {
           expect(err).to.not.equal(null);
-          expect(err.aField).to.not.equal(null);
-          expect(err.errors.aField.message).to.equal("The value is of the wrong type");
+          expect(err.errors().length).to.equal(1);
+          expect(err.errors()[0].message).to.equal("Error validating aField: The value ae7623e9-715b-4e0f-92ca-913d8f523eb119a07283-7bf4-4eda-963c-003dba950de5d2ab639e-ad8b-4747-92dd-4603b6eb4fe5 is of the wrong type");
           doneCallback();
         });
       },
       function(doneCallback) {
         Scrubber.validateObject(badObjNull, spec, function(err, parsedValues) {
           expect(err).to.not.equal(null);
-          expect(err.errors.aField).to.not.equal(undefined);
-          expect(err.errors.aField.message).to.equal("The value can not be null");
+          expect(err.errors().length).to.equal(1);
+          expect(err.errors()[0].message).to.equal("Error validating aField: The value can not be null");
           doneCallback();
         });
       }
@@ -511,7 +514,8 @@ describe("request-scrubber", function () {
         Scrubber.validateObject(badObj, spec, function(err, parsedValues) {
           expect(err).to.not.equal(null);
           expect(parsedValues).to.not.equal(null);
-          expect(err.errors.aField.message).to.equal("The value is of the wrong type");
+          expect(err.errors().length).to.equal(1);
+          expect(err.errors()[0].message).to.equal("Error validating aField: The value NaN is of the wrong type");
           doneCallback();
         });
 
@@ -567,11 +571,8 @@ describe("request-scrubber", function () {
       function(doneCallback) {
         Scrubber.validateObject(badObj, spec, function(err, parsedValues) {
           expect(err).to.not.equal(null);
-          expect(err.errors).to.not.equal(undefined);
-          expect(err.errors.name).to.not.equal(undefined);
-          expect(err.errors.name.message).to.equal("Validation failed for fields");
-          expect(err.errors.name.errors).to.not.equal(undefined);
-          expect(err.errors.name.errors.last.message).to.equal("The value can not be null");
+          expect(err.errors().length).to.equal(1);
+          expect(err.errors()[0].message).to.equal("Error validating name: first of 1 error: Error validating last: The value can not be null");
           doneCallback();
         });
       },
@@ -706,9 +707,8 @@ describe("request-scrubber", function () {
       function(doneCallback) {
         Scrubber.validateObject(badObj, spec, function(err, parsedValues) {
           expect(err).to.not.equal(null);
-          expect(err.errors).to.not.equal(undefined);
-          expect(err.errors.address).to.not.equal(undefined);
-          expect(err.errors.address.message).to.equal("A value is required");
+          expect(err.errors().length).to.equal(1);
+          expect(err.errors()[0].message).to.equal("Error validating address: A value is required");
           doneCallback();
         });
       },
@@ -778,12 +778,8 @@ describe("request-scrubber", function () {
       function(doneCallback) {
         Scrubber.validateObject(badObj, spec, function(err, parsedValues) {
           expect(err).to.not.equal(null);
-          expect(err.errors).to.not.equal(undefined);
-          expect(err.errors.person).to.not.equal(undefined);
-          expect(err.errors.person.errors).to.not.equal(undefined);
-          expect(err.errors.person.errors.name).to.not.equal(undefined);
-          expect(err.errors.person.errors.name.errors).to.not.equal(undefined);
-          expect(err.errors.person.errors.name.errors.last).to.not.equal(undefined);
+          expect(err.errors().length).to.equal(1);
+          expect(err.errors()[0].message).to.equal("Error validating person: first of 1 error: Error validating name: first of 1 error: Error validating last: A value is required");
           doneCallback();
         });
       },
@@ -833,30 +829,33 @@ describe("request-scrubber", function () {
       function(doneCallback) {
         Scrubber.validateObject(badObj, spec, function(err, parsedValues) {
           expect(err).to.not.equal(null);
-          expect(err.errors.aField.message).to.equal("Not all requested records were found. Expected 1 but got 0");
+          expect(err.errors().length).to.equal(1);
+          expect(err.errors()[0].message).to.equal("Error validating aField: Not all requested records were found. Expected 1 but got 0");
           doneCallback();
         });
       },
       function(doneCallback) {
         Scrubber.validateObject(badObjNull, spec, function(err, parsedValues) {
           expect(err).to.not.equal(null);
-          expect(err.errors.aField.message).to.equal("The value can not be null");
+          expect(err.errors().length).to.equal(1);
+          expect(err.errors()[0].message).to.equal("Error validating aField: The value can not be null");
           doneCallback();
         });
       },
       function(doneCallback) {
         Scrubber.validateObject(badObjMissing, spec, function(err, parsedValues) {
           expect(err).to.not.equal(null);
-          expect(err.errors.aField.message).to.equal("Not all requested records were found. Expected 2 but got 1");
+          expect(err.errors().length).to.equal(1);
+          expect(err.errors()[0].message).to.equal("Error validating aField: Not all requested records were found. Expected 2 but got 1");
           doneCallback();
         });
       },
       function(doneCallback) {
         Scrubber.validateObject(badObjMisformed, spec, function(err, parsedValues) {
           expect(err).to.not.equal(null);
-          expect(err.errors.aField.message).to.equal("The value is of the wrong type");
-          expect(err.errors.aField.badValue).to.not.equal(undefined);
-          expect(err.errors.aField.badValue).to.equal("ae7623e9-715b-4e0f-92ca-913d8f523eb1zzz");
+          expect(err.errors().length).to.equal(1);
+          expect(err.errors()[0].message).to.equal("Error validating aField: The value ae7623e9-715b-4e0f-92ca-913d8f523eb1zzz is of the wrong type");
+          expect(verror.VError.info(err.errors()[0]).badValue).to.equal("ae7623e9-715b-4e0f-92ca-913d8f523eb1zzz");
           doneCallback();
         });
       },
@@ -917,8 +916,8 @@ describe("request-scrubber", function () {
       },
       function(cb) {
         Scrubber.validateObject(badObj, spec, function(err, parsed) {
-          expect(err).to.not.equal(null);
-          expect(err.errors.arr.errors.a.message).to.equal('The value is of the wrong type');
+          expect(err.errors().length).to.equal(1);
+          expect(err.errors()[0].message).to.equal("Error validating aField: The value is of the wrong type");
           return cb();
         });
       }

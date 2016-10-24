@@ -26,7 +26,8 @@
   "dependencies": {
     "validator":"4.4.0",
     "assert-plus":"1.0.0",
-    "async":"1.5.0"
+    "async":"1.5.0",
+    "verror":"1.8.1"
   },
   "directories": {
     "test": "test"
