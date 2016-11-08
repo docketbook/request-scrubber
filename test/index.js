@@ -917,7 +917,7 @@ describe("request-scrubber", function () {
       function(cb) {
         Scrubber.validateObject(badObj, spec, function(err, parsed) {
           expect(err.errors().length).to.equal(1);
-          expect(err.errors()[0].message).to.equal("Error validating aField: The value is of the wrong type");
+          expect(err.errors()[0].message).to.equal("Error validating arr: first of 1 error: Error validating a: string is the wrong type");
           return cb();
         });
       }
@@ -925,5 +925,291 @@ describe("request-scrubber", function () {
       done();
     });
   });
+
+  it('#Can validate basic values of an object ', function(done) {
+    let spec = {
+      fields: {
+        title: {
+          type: Type.string,
+          notNull: true,
+          required: true,
+        },
+        emailAddresses: {
+          values: {
+            rawValue: {type: Type.boolean}
+          }
+        },
+        person: {
+          fields: {
+            name: {
+              fields: {
+                first: {
+                  type: Type.string,
+                  notNull: true,
+                  required: true,
+                },
+                last: {
+                  type: Type.string,
+                  notNull: true,
+                  required: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    };
+    let goodObj = {
+      emailAddresses: {
+        "test@test.com": true
+      },
+      person: {
+        name: {
+          first: "Dave",
+          last: "Finster",
+        },
+      },
+      title: "Something",
+    }
+    let badObj = {
+      emailAddresses: {
+        "test@test.com": "asdf"
+      },
+      person: {
+        name: {
+          first: "Dave",
+          last: "Finster",
+        },
+      },
+      title: "Something",
+    }
+    async.series([
+      function(doneCallback) {
+        Scrubber.validateObject(goodObj, spec, function(err, parsedValues) {
+          expect(err).to.equal(null);
+          expect(parsedValues).to.not.equal(null);
+          expect(parsedValues.person).to.not.equal(undefined);
+          expect(parsedValues.person.name).to.not.equal(undefined);
+          expect(parsedValues.person.name.first).to.equal("Dave");
+          expect(parsedValues.person.name.last).to.equal("Finster");
+          expect(parsedValues.emailAddresses).to.not.equal(undefined);
+          expect(parsedValues.emailAddresses).to.not.equal(null);
+          expect(Object.keys(parsedValues.emailAddresses).length).to.equal(1);
+          expect(Object.keys(parsedValues.emailAddresses)[0]).to.equal("test@test.com");
+          expect(parsedValues.emailAddresses["test@test.com"]).to.equal(true);
+          doneCallback();
+        });
+      },
+      function(doneCallback) {
+        Scrubber.validateObject(badObj, spec, function(err, parsedValues) {
+          expect(err).to.not.equal(null);
+          expect(err.errors().length).to.equal(1);
+          expect(err.errors()[0].message).to.equal("Error validating emailAddresses: first of 1 error: Error validating rawValue: asdf is the wrong type");
+          doneCallback();
+        });
+      }
+    ], function(err) {
+      done(err);
+    });
+  })
+
+  it('#Can validate the values of an object ', function(done) {
+    let spec = {
+      fields: {
+        title: {
+          type: Type.string,
+          notNull: true,
+          required: true,
+        },
+        emailAddresses: {
+          values: {
+            default: {type: Type.boolean}
+          }
+        },
+        person: {
+          fields: {
+            name: {
+              fields: {
+                first: {
+                  type: Type.string,
+                  notNull: true,
+                  required: true,
+                },
+                last: {
+                  type: Type.string,
+                  notNull: true,
+                  required: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    };
+    let goodObj = {
+      emailAddresses: {
+        "test@test.com": {
+          default: true
+        }
+      },
+      person: {
+        name: {
+          first: "Dave",
+          last: "Finster",
+        },
+      },
+      title: "Something",
+    }
+    let badObj = {
+      emailAddresses: {
+        "test@test.com": {
+          default: "asdf"
+        }
+      },
+      person: {
+        name: {
+          first: "Dave",
+          last: "Finster",
+        },
+      },
+      title: "Something",
+    }
+    async.series([
+      function(doneCallback) {
+        Scrubber.validateObject(goodObj, spec, function(err, parsedValues) {
+          expect(err).to.equal(null);
+          expect(parsedValues).to.not.equal(null);
+          expect(parsedValues.person).to.not.equal(undefined);
+          expect(parsedValues.person.name).to.not.equal(undefined);
+          expect(parsedValues.person.name.first).to.equal("Dave");
+          expect(parsedValues.person.name.last).to.equal("Finster");
+          expect(parsedValues.emailAddresses).to.not.equal(undefined);
+          expect(parsedValues.emailAddresses).to.not.equal(null);
+          expect(Object.keys(parsedValues.emailAddresses).length).to.equal(1);
+          expect(Object.keys(parsedValues.emailAddresses)[0]).to.equal("test@test.com");
+          expect(Object.keys(parsedValues.emailAddresses["test@test.com"]).length).to.equal(1);
+          expect(Object.keys(parsedValues.emailAddresses["test@test.com"])[0]).to.equal("default");
+          expect(parsedValues.emailAddresses["test@test.com"].default).to.equal(true);
+          doneCallback();
+        });
+      },
+      function(doneCallback) {
+        Scrubber.validateObject(badObj, spec, function(err, parsedValues) {
+          expect(err).to.not.equal(null);
+          expect(err.errors().length).to.equal(1);
+          expect(err.errors()[0].message).to.equal("Error validating emailAddresses: first of 1 error: Error validating default: asdf is the wrong type");
+          doneCallback();
+        });
+      }
+    ], function(err) {
+      done(err);
+    });
+  })
+
+  it('#Can validate the values of an object (nested)', function(done) {
+    let spec = {
+      fields: {
+        title: {
+          type: Type.string,
+          notNull: true,
+          required: true,
+        },
+        emailAddresses: {
+          values: {
+            default: {
+              values: {
+                booleanValue: {type: Type.boolean}
+              }
+            }
+          }
+        },
+        person: {
+          fields: {
+            name: {
+              fields: {
+                first: {
+                  type: Type.string,
+                  notNull: true,
+                  required: true,
+                },
+                last: {
+                  type: Type.string,
+                  notNull: true,
+                  required: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    };
+    let goodObj = {
+      emailAddresses: {
+        "test@test.com": {
+          default: {
+            veryDefaulty: {
+              booleanValue: true
+            }
+          }
+        }
+      },
+      person: {
+        name: {
+          first: "Dave",
+          last: "Finster",
+        },
+      },
+      title: "Something",
+    }
+    let badObj = {
+      emailAddresses: {
+        "test@test.com": {
+          default: {
+            veryDefaulty: {
+              booleanValue: "wuiergnf"
+            }
+          }
+        }
+      },
+      person: {
+        name: {
+          first: "Dave",
+          last: "Finster",
+        },
+      },
+      title: "Something",
+    }
+    async.series([
+      function(doneCallback) {
+        Scrubber.validateObject(goodObj, spec, function(err, parsedValues) {
+          expect(err).to.equal(null);
+          expect(parsedValues).to.not.equal(null);
+          expect(parsedValues.person).to.not.equal(undefined);
+          expect(parsedValues.person.name).to.not.equal(undefined);
+          expect(parsedValues.person.name.first).to.equal("Dave");
+          expect(parsedValues.person.name.last).to.equal("Finster");
+          expect(parsedValues.emailAddresses).to.not.equal(undefined);
+          expect(parsedValues.emailAddresses).to.not.equal(null);
+          expect(Object.keys(parsedValues.emailAddresses).length).to.equal(1);
+          expect(Object.keys(parsedValues.emailAddresses)[0]).to.equal("test@test.com");
+          expect(Object.keys(parsedValues.emailAddresses["test@test.com"]).length).to.equal(1);
+          expect(Object.keys(parsedValues.emailAddresses["test@test.com"])[0]).to.equal("default");
+          expect(Object.keys(parsedValues.emailAddresses["test@test.com"].default)[0]).to.equal("veryDefaulty");
+          expect(parsedValues.emailAddresses["test@test.com"].default.veryDefaulty.booleanValue).to.equal(true)
+          doneCallback();
+        });
+      },
+      function(doneCallback) {
+        Scrubber.validateObject(badObj, spec, function(err, parsedValues) {
+          expect(err).to.not.equal(null);
+          expect(err.errors().length).to.equal(1);
+          expect(err.errors()[0].message).to.equal("Error validating emailAddresses: first of 1 error: Error validating default: first of 1 error: Error validating booleanValue: wuiergnf is the wrong type");
+          doneCallback();
+        });
+      }
+    ], function(err) {
+      done(err);
+    });
+  })
 
 });
